@@ -1,0 +1,34 @@
+{
+  "action": {
+    "default_icon": {
+      "128": "icons/icon128.png",
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png"
+    },
+    "default_popup": "popup.html",
+    "default_title": "JobHunt Tracker"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "description": "Save job postings in one click and track your application pipeline. No login, no account \u2014 data stays in your browser.",
+  "icons": {
+    "128": "icons/icon128.png",
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png"
+  },
+  "manifest_version": 3,
+  "name": "JobHunt Tracker",
+  "options_page": "dashboard.html",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "alarms",
+    "notifications"
+  ],
+  "version": "0.8.2",
+  "optional_host_permissions": [
+    "<all_urls>"
+  ]
+}

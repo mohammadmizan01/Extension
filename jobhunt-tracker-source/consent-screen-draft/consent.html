@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JobHunt Tracker — Before you start</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: #f8fafc; color: #0f172a; margin: 0; padding: 40px 16px;
+    }
+    .card {
+      max-width: 520px; margin: 0 auto; background: #fff;
+      border: 1px solid #e2e8f0; border-radius: 14px; padding: 28px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }
+    .card h1 { font-size: 20px; margin: 0 0 4px; }
+    .card .sub { font-size: 13px; color: #64748b; margin: 0 0 16px; }
+    .notice {
+      background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af;
+      font-size: 13px; border-radius: 8px; padding: 10px 12px; margin-bottom: 16px;
+    }
+    ul.facts { list-style: none; padding: 0; margin: 0 0 20px; display: flex; flex-direction: column; gap: 10px; }
+    ul.facts li { font-size: 14px; line-height: 1.5; padding-left: 28px; position: relative; }
+    ul.facts li::before { position: absolute; left: 0; }
+    li.stays::before { content: '🔒'; }
+    li.you::before { content: '👆'; }
+    li.never::before { content: '🚫'; }
+    details { font-size: 13px; color: #475569; margin-bottom: 20px; }
+    details summary { cursor: pointer; font-weight: 600; color: #2563eb; }
+    details ul { margin: 8px 0 0; padding-left: 20px; }
+    .actions { display: flex; gap: 10px; }
+    .btn {
+      flex: 1; border: none; border-radius: 8px; padding: 12px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+    }
+    .btn.agree { background: #2563eb; color: #fff; }
+    .btn.decline { background: #f1f5f9; color: #475569; }
+    .fine { font-size: 11px; color: #94a3b8; margin: 14px 0 0; text-align: center; }
+    .declined-state { display: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>JobHunt Tracker</h1>
+    <p class="sub">Before you save your first job, here's exactly what this extension does with your data.</p>
+
+    <div class="notice" id="changedNotice" style="display:none;">
+      <strong>What changed:</strong> JobHunt Tracker now offers optional cloud sync across your devices.
+      If you don't set it up in Settings, everything below stays exactly as before.
+    </div>
+
+    <ul class="facts">
+      <li class="you"><strong>You choose what to save.</strong> The extension only reads pages where <em>you</em> click Scan or Save — it never crawls or opens pages on its own.</li>
+      <li class="stays"><strong>Your data stays in your browser.</strong> Saved jobs (title, company, location, URL, notes) and your site list live in Chrome's local storage on this device. Nothing is sold, shared, or used for ads.</li>
+      <li class="you"><strong>Cloud sync is opt-in only.</strong> Your jobs leave this browser only if you set up sync yourself in Settings — it goes to a server you control, protected by your own sync key.</li>
+      <li class="never"><strong>Never collected:</strong> passwords, browsing history, emails, or anything from pages you didn't ask it to read.</li>
+    </ul>
+
+    <details>
+      <summary>Full data list</summary>
+      <ul>
+        <li>Job postings you save: title, company, location, URL, status, notes, and any contact fields you fill in.</li>
+        <li>Your custom website list (set up in Settings).</li>
+        <li>If you enable cloud sync: the same saved-job data plus your sync credentials, sent to the backend URL you configure.</li>
+        <li>Chrome permissions used: <code>storage</code> (save your jobs), <code>activeTab</code>/<code>scripting</code> (read the job page you clicked on), <code>alarms</code> + <code>notifications</code> (follow-up reminders), and optional host access for sites you add.</li>
+      </ul>
+    </details>
+
+    <div class="actions" id="consentButtons">
+      <button class="btn decline" id="declineBtn">Decline</button>
+      <button class="btn agree" id="agreeBtn">Agree &amp; start tracking</button>
+    </div>
+
+    <div class="declined-state" id="declinedState">
+      <div class="notice">No problem — without local storage the extension can't save jobs, so it won't do anything. You can remove it anytime from <code>chrome://extensions</code>.</div>
+      <div class="actions"><button class="btn agree" id="closeBtn">Close this tab</button></div>
+    </div>
+
+    <p class="fine">If these practices ever change, we'll show this screen again before the change takes effect.</p>
+  </div>
+
+  <script>
+    // Must match the value in background.js
+    const DATA_PRACTICES_VERSION = 1;
+    const params = new URLSearchParams(location.search);
+    if (params.get('changed') === '1') {
+      document.getElementById('changedNotice').style.display = 'block';
+    }
+
+    document.getElementById('agreeBtn').addEventListener('click', async () => {
+      await chrome.storage.local.set({
+        privacyConsent: { version: DATA_PRACTICES_VERSION, acceptedAt: new Date().toISOString() },
+      });
+      window.close();
+    });
+
+    document.getElementById('declineBtn').addEventListener('click', () => {
+      document.getElementById('consentButtons').style.display = 'none';
+      document.getElementById('declinedState').style.display = 'block';
+    });
+
+    document.getElementById('closeBtn').addEventListener('click', () => window.close());
+  </script>
+</body>
+</html>
